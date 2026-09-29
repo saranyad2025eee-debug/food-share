@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodShare - Donate Food</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7f4;
+            margin: 0;
+            padding: 30px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #176b43;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 20px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px #ddd;
+        }
+
+        input, textarea, button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            background: #198754;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #146c43;
+        }
+
+        .food-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>FoodShare</h1>
+    <h2>Donate Food</h2>
+
+    <div class="container">
+        <form id="foodForm">
+            <input id="name" placeholder="Food Name" required>
+            <textarea id="description" placeholder="Food Description" required></textarea>
+            <input id="quantity" placeholder="Quantity" required>
+            <input id="location" placeholder="Location" required>
+            <input id="donor" placeholder="Donor Name" required>
+            <input id="contact" placeholder="Contact Number" required>
+            <button type="submit">Donate Food</button>
+        </form>
+    </div>
+
+    <h2>Available Food</h2>
+
+    <div class="container" id="foodList">
+        <p>No food donations yet.</p>
+    </div>
+
+    <script>
+        const form = document.getElementById("foodForm");
+        const foodList = document.getElementById("foodList");
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("name").value;
+            const description = document.getElementById("description").value;
+            const quantity = document.getElementById("quantity").value;
+            const location = document.getElementById("location").value;
+            const donor = document.getElementById("donor").value;
+            const contact = document.getElementById("contact").value;
+
+            const card = document.createElement("div");
+            card.className = "food-card";
+
+            const title = document.createElement("h3");
+            title.textContent = name;
+
+            const details = document.createElement("p");
+            details.textContent = description + " | Quantity: " + quantity;
+
+            const place = document.createElement("p");
+            place.textContent = "Location: " + location;
+
+            const donorInfo = document.createElement("p");
+            donorInfo.textContent = "Donor: " + donor + " | Contact: " + contact;
+
+            card.append(title, details, place, donorInfo);
+
+            if (foodList.querySelector("p")) {
+                foodList.innerHTML = "";
+            }
+
+            foodList.appendChild(card);
+            form.reset();
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,232 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodShare - Share Food, Spread Love</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f5f7f2;
+            color: #333;
+        }
+
+        header {
+            background: #198754;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        nav {
+            background: #146c43;
+            padding: 12px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 15px;
+            font-weight: bold;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 35px 15px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        form {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px #ddd;
+        }
+
+        input, textarea, button {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            background: #198754;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #146c43;
+        }
+
+        #message {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #146c43;
+            color: white;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>FoodShare</h1>
+    <p>Share Food, Spread Love</p>
+</header>
+
+<nav>
+    <a href="#home">Home</a>
+    <a href="#addfood">Donate Food</a>
+    <a href="#available">Available Food</a>
+</nav>
+
+<section class="hero" id="home">
+    <h2>Welcome to FoodShare</h2>
+    <p>Help people in need by sharing surplus food.</p>
+</section>
+
+<div class="container" id="addfood">
+    <h2>Donate Food</h2>
+
+    <form id="foodForm">
+        <input type="text" id="foodName"
+               placeholder="Food Name" required>
+
+        <textarea id="description"
+                  placeholder="Food Description" required></textarea>
+
+        <input type="number" id="quantity"
+               placeholder="Quantity" min="1" required>
+
+        <input type="text" id="location"
+               placeholder="Location" required>
+
+        <input type="text" id="donorName"
+               placeholder="Donor Name" required>
+
+        <input type="text" id="contact"
+               placeholder="Contact Number" required>
+
+        <button type="submit">Donate Food</button>
+    </form>
+
+    <p id="message"></p>
+</div>
+
+<div class="container" id="available">
+    <h2>Available Food</h2>
+    <div id="foodList">
+        Loading food details...
+    </div>
+</div>
+
+<footer>
+    <p>FoodShare - Together We Can Reduce Food Waste</p>
+</footer>
+<script>
+document.getElementById("foodForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const foodData = {
+        foodName: document.getElementById("foodName").value,
+        description: document.getElementById("description").value,
+        quantity: document.getElementById("quantity").value,
+        location: document.getElementById("location").value,
+        donorName: document.getElementById("donorName").value,
+        contact: document.getElementById("contact").value
+    };
+
+    try {
+        const response = await fetch("http://localhost:8080/api/foods", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(foodData)
+        });
+
+        if (response.ok) {
+            alert("Food donated successfully!");
+            document.getElementById("foodForm").reset();
+        } else {
+            alert("Error donating food. Please check backend.");
+        }
+    } catch (error) {
+        alert("Backend connection failed!");
+        console.error(error);
+    }
+});
+// Load available food from backend
+async function loadFoods() {
+    const foodList = document.getElementById("foodList");
+
+    try {
+        const response = await fetch("http://localhost:8080/api/foods");
+
+        if (!response.ok) {
+            throw new Error("Failed to load food");
+        }
+
+        const foods = await response.json();
+
+        foodList.innerHTML = "";
+
+        if (foods.length === 0) {
+            foodList.innerHTML = "<p>No food available.</p>";
+            return;
+        }
+
+        foods.forEach(food => {
+            const card = document.createElement("div");
+
+            card.style.background = "#ffffff";
+            card.style.padding = "20px";
+            card.style.margin = "15px 0";
+            card.style.borderRadius = "10px";
+            card.style.boxShadow = "0 2px 8px #ddd";
+
+            card.innerHTML = `
+                <h3>${food.foodName}</h3>
+                <p><b>Description:</b> ${food.description}</p>
+                <p><b>Quantity:</b> ${food.quantity}</p>
+                <p><b>Location:</b> ${food.location}</p>
+                <p><b>Donor:</b> ${food.donorName}</p>
+                <p><b>Contact:</b> ${food.contact}</p>
+            `;
+
+            foodList.appendChild(card);
+        });
+
+    } catch (error) {
+        foodList.innerHTML =
+            "<p>Unable to load food. Please check backend.</p>";
+        console.error(error);
+    }
+}
+
+// Load food when page opens
+loadFoods();
+</script>
+</body>
+</html>
